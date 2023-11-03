@@ -1,0 +1,40 @@
+@import "./colors.scss";
+
+* {
+  padding: 0;
+  margin: 0;
+  font-size: 100%;
+  font: inherit;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: url(../img/photo-1618005182384-a83a8bd57fbe.jpg) center / cover
+    no-repeat fixed;
+  color: $text-color;
+}
+
+a {
+  text-decoration: none;
+  color: $primary-color;
+}
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+input[type="radio"] {
+  transform: scale(1.5);
+  accent-color: $primary-color;
+  margin: 0 10px;
+}
