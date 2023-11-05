@@ -49,22 +49,7 @@ const Compare = () => {
     query: query,
   }
 
-  const statsData = stats.map((stat) => stat.value)
-  const statsLabels = stats.map((stat) => stat.name)
-  const data = {
-    labels: statsLabels,
-    datasets: [
-      {
-        label: "# of Votes",
-        data: statsData,
-        backgroundColor: [
-          "rgba(253, 181, 104, 0.7)",
-          "rgba(54, 162, 235, 0.7)",
-        ],
-        borderWidth: 1,
-      },
-    ],
-  }
+  const statsData = setUpStats()
 
   ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -184,10 +169,30 @@ const Compare = () => {
       <StyledCard data-testid="fifth-card" $showit={globalStep > 1}>
         <StyledCardTitle>Stats</StyledCardTitle>
         Historic of the reviews
-        <Pie data={data} />
+        <Pie data={statsData} />
       </StyledCard>
     </>
   )
+
+  function setUpStats() {
+    const statsData = stats.map((stat) => stat.value)
+    const statsLabels = stats.map((stat) => stat.name)
+    const data = {
+      labels: statsLabels,
+      datasets: [
+        {
+          label: "# of Votes",
+          data: statsData,
+          backgroundColor: [
+            "rgba(253, 181, 104, 0.7)",
+            "rgba(54, 162, 235, 0.7)",
+          ],
+          borderWidth: 1,
+        },
+      ],
+    }
+    return data
+  }
 }
 
 export default Compare
