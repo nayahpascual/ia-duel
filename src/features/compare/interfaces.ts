@@ -16,14 +16,18 @@ export interface stat {
 export interface compareState {
   globalStep: number
   userId: string
-  chatGptApiKey: string
-  query: string
-  gptThreeAnswer: string
-  gptThreeAnswerTime: number
-  gptFourAnswer: string
-  gptFourAnswerTime: number
-  askApisStatus: "idle" | "loading" | "failed"
-  bestModel: string
-  askReviewStatus: "idle" | "loading" | "failed"
+  apis: {
+    chatGptApiKey: string
+    query: string
+    gptThreeAnswer: string
+    gptThreeAnswerTime: number
+    gptFourAnswer: string
+    gptFourAnswerTime: number
+    askApisStatus: "idle" | "loading" | "failed"
+  }
+  review: {
+    bestModel: string
+    askReviewStatus: "idle" | "loading" | "failed"
+  }
   stats: stat[]
 }

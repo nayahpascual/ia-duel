@@ -12,15 +12,19 @@ import processReviews from "../../../utils/functions/stats"
 const initialState: compareState = {
   globalStep: 0,
   userId: uuid(),
-  chatGptApiKey: "",
-  query: "",
-  gptThreeAnswer: "",
-  gptThreeAnswerTime: 0,
-  gptFourAnswer: "",
-  gptFourAnswerTime: 0,
-  askApisStatus: "idle",
-  askReviewStatus: "idle",
-  bestModel: "none",
+  apis: {
+    chatGptApiKey: "",
+    query: "",
+    gptThreeAnswer: "",
+    gptThreeAnswerTime: 0,
+    gptFourAnswer: "",
+    gptFourAnswerTime: 0,
+    askApisStatus: "idle",
+  },
+  review: {
+    bestModel: "none",
+    askReviewStatus: "idle",
+  },
   stats: [
     { name: "gpt-3.5-turbo", value: 0 },
     { name: "gpt-4", value: 0 },
@@ -79,19 +83,19 @@ export const compareSlice = createSlice({
       state.userId = action.payload
     },
     setChatGptApiKey: (state, action) => {
-      state.chatGptApiKey = action.payload
+      state.apis.chatGptApiKey = action.payload
     },
     setQuery: (state, action) => {
-      state.query = action.payload
+      state.apis.query = action.payload
     },
     setGptThreeAnswer: (state, action) => {
-      state.gptThreeAnswer = action.payload
+      state.apis.gptThreeAnswer = action.payload
     },
     setGptFourAnswer: (state, action) => {
-      state.gptFourAnswer = action.payload
+      state.apis.gptFourAnswer = action.payload
     },
     setBestModel: (state, action) => {
-      state.bestModel = action.payload
+      state.review.bestModel = action.payload
     },
   },
   // Extra reducers for async thunks
@@ -99,38 +103,38 @@ export const compareSlice = createSlice({
     builder
       // Ask IAs Calls
       .addCase(askIaAsync.pending, (state) => {
-        state.askApisStatus = "loading"
+        state.apis.askApisStatus = "loading"
       })
       .addCase(askIaAsync.fulfilled, (state, action) => {
         if (action.payload && action.payload[0].response.choices) {
-          state.gptThreeAnswer =
+          state.apis.gptThreeAnswer =
             action.payload[0].response.choices[0].message.content
-          state.gptThreeAnswerTime = action.payload[0].elapseTimeMs
-          state.gptFourAnswer =
+          state.apis.gptThreeAnswerTime = action.payload[0].elapseTimeMs
+          state.apis.gptFourAnswer =
             action.payload[1].response.choices[0].message.content
-          state.gptFourAnswerTime = action.payload[1].elapseTimeMs
+          state.apis.gptFourAnswerTime = action.payload[1].elapseTimeMs
           state.globalStep = 1
         } else {
           showError("Error with APIs response")
         }
-        state.askApisStatus = "idle"
+        state.apis.askApisStatus = "idle"
       })
 
       .addCase(askIaAsync.rejected, (state) => {
-        state.askApisStatus = "failed"
+        state.apis.askApisStatus = "failed"
       })
       // Review Calls
       .addCase(sendReviewAsync.pending, (state) => {
-        state.askReviewStatus = "loading"
+        state.review.askReviewStatus = "loading"
       })
       .addCase(sendReviewAsync.fulfilled, (state, action) => {
         state.stats = processReviews(action.payload)
         showMessage("Thanks for your review!")
         state.globalStep = 2
-        state.askReviewStatus = "idle"
+        state.review.askReviewStatus = "idle"
       })
       .addCase(sendReviewAsync.rejected, (state) => {
-        state.askReviewStatus = "failed"
+        state.review.askReviewStatus = "failed"
       })
   },
 })
@@ -146,25 +150,23 @@ export const {
   setBestModel,
 } = compareSlice.actions
 
-// Export Selectors
-export const selectUserId = (state: RootState) => state.compare.userId
-export const selectChatGptApiKey = (state: RootState) =>
-  state.compare.chatGptApiKey
-export const selectQuery = (state: RootState) => state.compare.query
-export const selectGptThreeAnswer = (state: RootState) =>
-  state.compare.gptThreeAnswer
-export const selectGptFourAnswer = (state: RootState) =>
-  state.compare.gptFourAnswer
-export const selectApisAskStatus = (state: RootState) =>
-  state.compare.askApisStatus
-export const selectBestModel = (state: RootState) => state.compare.bestModel
-export const selectAskReviewStatus = (state: RootState) =>
-  state.compare.askReviewStatus
-export const selectGptThreeAnswerTime = (state: RootState) =>
-  state.compare.gptThreeAnswerTime
-export const selectGptFourAnswerTime = (state: RootState) =>
-  state.compare.gptFourAnswerTime
-export const selectStats = (state: RootState) => state.compare.stats
-export const selectGlobalStep = (state: RootState) => state.compare.globalStep
-
+export const selectors = {
+  selectGlobalStep: (state: RootState) => state.compare.globalStep,
+  selectUserId: (state: RootState) => state.compare.userId,
+  selectChatGptApiKey: (state: RootState) => state.compare.apis.chatGptApiKey,
+  selectQuery: (state: RootState) => state.compare.apis.query,
+  selectGptThreeAnswer: (state: RootState) => state.compare.apis.gptThreeAnswer,
+  selectGptFourAnswer: (state: RootState) => state.compare.apis.gptFourAnswer,
+  selectApisAskStatus: (state: RootState) => state.compare.apis.askApisStatus,
+  selectGptThreeAnswerTime: (state: RootState) =>
+    state.compare.apis.gptThreeAnswerTime,
+  selectGptFourAnswerTime: (state: RootState) =>
+    state.compare.apis.gptFourAnswerTime,
+  selectBestModel: (state: RootState) => state.compare.review.bestModel,
+  selectAskReviewStatus: (state: RootState) =>
+    state.compare.review.askReviewStatus,
+  selectStats: (state: RootState) => state.compare.stats,
+  selectApis: (state: RootState) => state.compare.apis,
+  selectReview: (state: RootState) => state.compare.review,
+}
 export default compareSlice.reducer
