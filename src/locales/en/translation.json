@@ -1,0 +1,25 @@
+{
+  "title": "IA Duel",
+  "description": "Compare different IA engines",
+  "hot-to-get-api": "How to get your API Key?",
+  "loading": "Loading...",
+  "ask-ias": "Ask to IA",
+  "gpt3": "Chat GPT 3.5",
+  "gpt4": "Chat GPT 4",
+  "send-review": "Send review",
+  "historic-reviews": "Historic reviews",
+
+  "introduce-key": "Introduce your ChatGpt API Key",
+  "make-question": "Make a question",
+  "introduce-question": "Introduce a question about anything",
+  "compare-results": "Compare the results",
+  "which-is-better": "Which one is better?",
+  "stats": "Stats",
+  "nr-votes": "# of Votes",
+
+  "error-connect-api": "Error connecting with APIs",
+  "error-sending-review": "Error sending your review",
+  "error-stats": "Stats",
+  "error-api-response": "Error with APIs response",
+  "thanks-review": "Thanks for your review!"
+}

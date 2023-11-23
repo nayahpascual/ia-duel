@@ -12,7 +12,7 @@ export interface stat {
   name: string
   value: number
 }
-
+type Status = "idle" | "loading" | "failed"
 export interface compareState {
   globalStep: number
   userId: string
@@ -23,11 +23,11 @@ export interface compareState {
     gptThreeAnswerTime: number
     gptFourAnswer: string
     gptFourAnswerTime: number
-    askApisStatus: "idle" | "loading" | "failed"
+    askApisStatus: Status
   }
   review: {
     bestModel: string
-    askReviewStatus: "idle" | "loading" | "failed"
+    askReviewStatus: Status
   }
   stats: stat[]
 }

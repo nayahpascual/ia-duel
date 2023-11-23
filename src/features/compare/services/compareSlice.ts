@@ -1,35 +1,21 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import { v4 as uuid } from "uuid"
+
+import i18n from "../../../i18n"
 import { RootState } from "../../../app/store"
 import { fetchAskChatGpt, fetchSendReview, fetchGetReviews } from "./compareAPI"
-import { userReview, compareState, askAPIs } from "../interfaces"
+import { userReview, askAPIs } from "../interfaces"
 import { showError, showMessage } from "../../../utils/functions/toasts"
 import promiseAllElapsedTime, {
   promiseAllTimesResponse,
 } from "../../../utils/functions/promises"
 import processReviews from "../../../utils/functions/stats"
-
-const initialState: compareState = {
-  globalStep: 0,
-  userId: uuid(),
-  apis: {
-    chatGptApiKey: "",
-    query: "",
-    gptThreeAnswer: "",
-    gptThreeAnswerTime: 0,
-    gptFourAnswer: "",
-    gptFourAnswerTime: 0,
-    askApisStatus: "idle",
-  },
-  review: {
-    bestModel: "none",
-    askReviewStatus: "idle",
-  },
-  stats: [
-    { name: "gpt-3.5-turbo", value: 0 },
-    { name: "gpt-4", value: 0 },
-  ],
-}
+import {
+  CALL_STATUS_IDLE,
+  CALL_STATUS_LOADING,
+  CALL_STATUS_FAILED,
+  API_MODELS,
+  initialState,
+} from "../constants/constants"
 
 // Async thunks
 export const askIaAsync = createAsyncThunk(
@@ -38,15 +24,15 @@ export const askIaAsync = createAsyncThunk(
     try {
       const startTime = Date.now()
       const asyncApiCalls = [
-        fetchAskChatGpt(askAPIs, "gpt-3.5-turbo"),
-        fetchAskChatGpt(askAPIs, "gpt-4"),
+        fetchAskChatGpt(askAPIs, API_MODELS.gpt3),
+        fetchAskChatGpt(askAPIs, API_MODELS.gpt4),
       ]
       const apisCallResults: promiseAllTimesResponse[] =
         await promiseAllElapsedTime(asyncApiCalls, startTime)
 
       return apisCallResults
     } catch (e) {
-      showError("Error connecting with APIs")
+      showError(i18n.t("error-connect-api"))
       return Promise.reject()
     }
   },
@@ -64,7 +50,7 @@ export const sendReviewAsync = createAsyncThunk(
       const allReviews = await getReviws.json()
       return allReviews
     } catch (e) {
-      showError("Error sending your review")
+      showError(i18n.t("error-sending-review"))
       return Promise.reject()
     }
   },
@@ -103,7 +89,7 @@ export const compareSlice = createSlice({
     builder
       // Ask IAs Calls
       .addCase(askIaAsync.pending, (state) => {
-        state.apis.askApisStatus = "loading"
+        state.apis.askApisStatus = CALL_STATUS_LOADING
       })
       .addCase(askIaAsync.fulfilled, (state, action) => {
         if (action.payload && action.payload[0].response.choices) {
@@ -115,26 +101,26 @@ export const compareSlice = createSlice({
           state.apis.gptFourAnswerTime = action.payload[1].elapseTimeMs
           state.globalStep = 1
         } else {
-          showError("Error with APIs response")
+          showError(i18n.t("error-api-response"))
         }
-        state.apis.askApisStatus = "idle"
+        state.apis.askApisStatus = CALL_STATUS_IDLE
       })
 
       .addCase(askIaAsync.rejected, (state) => {
-        state.apis.askApisStatus = "failed"
+        state.apis.askApisStatus = CALL_STATUS_FAILED
       })
       // Review Calls
       .addCase(sendReviewAsync.pending, (state) => {
-        state.review.askReviewStatus = "loading"
+        state.review.askReviewStatus = CALL_STATUS_LOADING
       })
       .addCase(sendReviewAsync.fulfilled, (state, action) => {
         state.stats = processReviews(action.payload)
-        showMessage("Thanks for your review!")
+        showMessage(i18n.t("thanks-review"))
         state.globalStep = 2
-        state.review.askReviewStatus = "idle"
+        state.review.askReviewStatus = CALL_STATUS_IDLE
       })
       .addCase(sendReviewAsync.rejected, (state) => {
-        state.review.askReviewStatus = "failed"
+        state.review.askReviewStatus = CALL_STATUS_FAILED
       })
   },
 })

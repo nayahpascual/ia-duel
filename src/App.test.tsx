@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react"
 import { Provider } from "react-redux"
 import { store } from "./app/store"
+import i18n from "./i18n"
 import App from "./App"
 
 // Mock the pie componet to avoid errors in the test with the canvas chart
@@ -15,5 +16,5 @@ test("renders the title", () => {
     </Provider>,
   )
 
-  expect(screen.getByText(/IA Duel/i)).toBeInTheDocument()
+  expect(screen.getByText(i18n.t("title"))).toBeInTheDocument()
 })
