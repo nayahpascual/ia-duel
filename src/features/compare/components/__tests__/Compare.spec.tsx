@@ -8,6 +8,8 @@ import {
 } from "@testing-library/react"
 import { configureStore } from "@reduxjs/toolkit"
 import { Provider } from "react-redux"
+
+import i18n from "../../../../i18n"
 import { ToastContainer } from "react-toastify"
 import createFetchMock from "vitest-fetch-mock"
 import compareReducer from "../../services/compareSlice"
@@ -93,9 +95,9 @@ describe("Inicial state", () => {
     await waitFor(() => {
       expect(screen.getByTestId("second-card")).toHaveStyle("opacity: 1")
     })
-    const firstCardTitle = screen.getByText(/Introduce your ChatGpt API Key/i)
+    const firstCardTitle = screen.getByText(i18n.t("introduce-question"))
     expect(firstCardTitle).toBeInTheDocument()
-    const secondCardTitle = screen.getByText(/Make a question/i)
+    const secondCardTitle = screen.getByText(i18n.t("make-question"))
     expect(secondCardTitle).toBeInTheDocument()
   })
   test("Ask IAs button is disable by default", () => {
@@ -175,9 +177,7 @@ describe("Ask IA button", () => {
     renderComponent()
     askIaStep()
     await waitFor(() => {
-      expect(
-        screen.getByText(/Error connecting with APIs/i),
-      ).toBeInTheDocument()
+      expect(screen.getByText(i18n.t("error-connect-api"))).toBeInTheDocument()
     })
   })
 })
@@ -245,7 +245,9 @@ describe("Review", () => {
     askIaStep()
     sendReviewStep()
     await waitFor(() => {
-      expect(screen.getByText(/Error sending your review/i)).toBeInTheDocument()
+      expect(
+        screen.getByText(i18n.t("error-sending-review")),
+      ).toBeInTheDocument()
     })
   })
   test("Stats card isn't shown after 'Send review' call have an error", async () => {

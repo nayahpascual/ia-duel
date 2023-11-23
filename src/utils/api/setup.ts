@@ -1,4 +1,4 @@
 export const reviewApiUrl =
-  "https://crudcrud.com/api/e32180367bf54b478d0fd27c40553d55"
+  "https://crudcrud.com/api/687e73a272794803a9d57f8c667b8dbd"
 
 export const chatGptApiUrl = "https://api.openai.com/v1/chat/completions"
